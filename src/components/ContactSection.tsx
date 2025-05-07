@@ -1,7 +1,12 @@
-
 import React, { useState } from 'react';
 import ScrollReveal from './ScrollReveal';
 import { Phone, Mail } from 'lucide-react';
+import emailjs from '@emailjs/browser';
+
+// Replace these with your actual EmailJS values
+const SERVICE_ID = 'service_hlwjj7u';
+const TEMPLATE_ID = 'template_2msmgbh';
+const PUBLIC_KEY = '6TIQC58a8RPSP1Jz6';
 
 const ContactSection: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -23,17 +28,22 @@ const ContactSection: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmitSuccess(true);
-      setFormData({ name: '', email: '', message: '' });
-      
-      setTimeout(() => {
-        setSubmitSuccess(false);
-      }, 5000);
-    }, 1500);
+
+    emailjs
+      .send(SERVICE_ID, TEMPLATE_ID, formData, PUBLIC_KEY)
+      .then(() => {
+        setIsSubmitting(false);
+        setSubmitSuccess(true);
+        setFormData({ name: '', email: '', message: '' });
+
+        setTimeout(() => {
+          setSubmitSuccess(false);
+        }, 5000);
+      })
+      .catch((error) => {
+        console.error('EmailJS error:', error);
+        setIsSubmitting(false);
+      });
   };
 
   const contactInfo = [
@@ -62,7 +72,7 @@ const ContactSection: React.FC = () => {
             Get In Touch
           </h2>
         </ScrollReveal>
-        
+
         <ScrollReveal>
           <div className="w-24 h-1 bg-accent mx-auto mb-12"></div>
         </ScrollReveal>
@@ -84,15 +94,13 @@ const ContactSection: React.FC = () => {
                   </div>
                 ))}
               </div>
-
-             
             </div>
           </ScrollReveal>
 
           <ScrollReveal delay={200}>
             <div className="bg-gray-50 p-6 md:p-8 rounded-lg shadow-sm">
               <h3 className="text-2xl font-semibold mb-6">Send Me a Message</h3>
-              
+
               {submitSuccess ? (
                 <div className="bg-green-50 text-green-700 p-4 rounded-md mb-6">
                   Thank you for your message! I'll get back to you soon.
@@ -113,7 +121,7 @@ const ContactSection: React.FC = () => {
                       required
                     />
                   </div>
-                  
+
                   <div>
                     <label htmlFor="email" className="block text-gray-700 mb-2">
                       Email
@@ -128,7 +136,7 @@ const ContactSection: React.FC = () => {
                       required
                     />
                   </div>
-                  
+
                   <div>
                     <label htmlFor="message" className="block text-gray-700 mb-2">
                       Message
@@ -143,7 +151,7 @@ const ContactSection: React.FC = () => {
                       required
                     ></textarea>
                   </div>
-                  
+
                   <button
                     type="submit"
                     className="w-full py-3 bg-primary text-white rounded-md font-medium hover:bg-primary/90 transition-colors disabled:opacity-70"
